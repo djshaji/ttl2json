@@ -9,14 +9,22 @@ g = Graph()
 g.parse(sys.argv [1])
 
 # Loop through each triple in the graph (subj, pred, obj)
+label = None
+filename = None
+print (sys.argv[1])
 for subj, pred, obj in g:
     # ~ print (f"subj: {subj} pred: {pred} obj: {obj}")
     # Check if there is at least one triple in the Graph
+    if (pred.find ("doap#name") != -1 and label == None):
+        label = obj
+    if (subj.find ("http://rakarrack.sourceforge.net/effects.html#") == 0):
+        filename = subj.split ("#")[1].split (":")[0]
+    
     if (subj, pred, obj) not in g:
        raise Exception("It better be!")
 
 # Print the number of "triples" in the Graph
-print(f"Graph g has {len(g)} statements.")
+# ~ print(f"Graph g has {len(g)} statements.")
 # Prints: Graph g has 86 statements.
 
 # Print out the entire Graph in the RDF Turtle format
@@ -44,4 +52,13 @@ for array in y:
             else:
                 control [b.split ("lv2core#")[-1]] = True
     data [index] = control
-print (data)
+
+data [-1]["pluginName"] = label
+s = json.dumps (data)
+# ~ print (s)
+print (filename)
+# ~ exit()
+f = open (filename + ".json", "w")
+# ~ f = open (sys.argv [1].split (".")[0] + ".json", "w")
+f.write (s)
+f.close ()
